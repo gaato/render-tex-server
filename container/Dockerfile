@@ -7,8 +7,10 @@ RUN apt update \
   xpdf
 
 COPY ./requirements.txt requirements.txt
-COPY ./tex.py /usr/bin
+COPY ./tex.py /usr/local/bin
+COPY ./texpdf.py /usr/local/bin
 COPY ./tex-template /tex-template
 
 RUN pip install -r requirements.txt \
-  && chmod +x /usr/bin/tex.py
+  && chmod +x /usr/local/bin/tex.py \
+  && chmod +x /usr/local/bin/texpdf.py

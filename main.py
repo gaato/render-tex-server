@@ -62,5 +62,34 @@ def render_texp(s=None):
         return None, 500
     return jsonify(result)
 
+
+@app.route('/texpdf/<s>', methods=['GET'])
+def render_texpdf(s=None):
+
+    r = subprocess.run(
+        ['docker', 'run', '-i', 'tex', 'texpdf.py', '-p'],
+        input=s,
+        stdout=subprocess.PIPE,
+        text=True,
+    )
+    if r.returncode == 0:
+        result = {
+            'status': 0,
+            'result': r.stdout,
+        }
+    elif r.returncode == 1:
+        result = {
+            'status': 1,
+            'error': r.stdout,
+        }
+    elif r.returncode == 2:
+        result = {
+            'status': 2,
+        }
+    else:
+        return None, 500
+    return jsonify(result)
+
+
 if __name__ == '__main__':
     app.run(host='localhost')
