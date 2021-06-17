@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build -t build ./container
+docker build -t tex ./container
