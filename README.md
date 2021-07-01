@@ -7,6 +7,6 @@
 
 ```
 $ pip -r requirements.txt
-$ sh build.sh
+$ sh build.sh # maybe with sudo
 $ python main.py
 ```
