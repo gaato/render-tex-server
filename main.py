@@ -12,7 +12,7 @@ def help():
 def render_tex(s=None):
 
     r = subprocess.run(
-        ['docker', 'run', '-i', 'tex', 'tex.py'],
+        ['docker', 'run', '--rm', '-i', 'tex', 'tex.py'],
         input=s,
         stdout=subprocess.PIPE,
         text=True,
@@ -39,7 +39,7 @@ def render_tex(s=None):
 def render_texp(s=None):
 
     r = subprocess.run(
-        ['docker', 'run', '-i', 'tex', 'tex.py', '-p'],
+        ['docker', 'run', '--rm', '-i', 'tex', 'tex.py', '-p'],
         input=s,
         stdout=subprocess.PIPE,
         text=True,
@@ -67,7 +67,7 @@ def render_texp(s=None):
 def render_texpdf(s=None):
 
     r = subprocess.run(
-        ['docker', 'run', '-i', 'tex', 'texpdf.py', '-p'],
+        ['docker', 'run', '--rm', '-i', 'tex', 'texpdf.py', '-p'],
         input=s,
         stdout=subprocess.PIPE,
         text=True,
