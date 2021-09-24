@@ -5,6 +5,7 @@ import base64
 import os
 import subprocess
 import sys
+import random
 
 from PIL import Image, ImageChops
 
@@ -31,8 +32,11 @@ def trim(image_path, range, absolute_trim_width=0):
     else:
         raise ValueError
     crop_image = image.crop(crop_range)
-    crop_image.save('trimed-' + os.path.basename(image_path))
+    crop_image.save('/tmp/trimed-' + os.path.basename(image_path))
 
+
+here = os.path.dirname(os.path.abspath(__file__))
+file_id = random.randrange(10 ** 10)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-p', '--plain',
@@ -43,42 +47,42 @@ args = parser.parse_args()
 stdin = sys.stdin.read()
 
 if args.plain:
-    with open('/tex-template/texp.tex', 'r') as f:
+    with open(f'{here}/tex-template/texp.tex', 'r') as f:
         tex_source = f.read()
 else:
-    with open('/tex-template/tex.tex', 'r') as f:
+    with open(f'{here}/tex-template/tex.tex', 'r') as f:
         tex_source = f.read()
 
 tex_source = tex_source.replace('[REPLACE]', stdin)
 
-with open('/tmp/tmp.tex', 'w') as f:
+with open(f'/tmp/{file_id}.tex', 'w') as f:
     f.write(tex_source)
 
 try:
-    uplatex = subprocess.run(['uplatex', '-halt-on-error', '-output-directory=/tmp', '/tmp/tmp.tex'], stdout=subprocess.PIPE, timeout=10.0)
+    uplatex = subprocess.run(['uplatex', '-halt-on-error', '-output-directory=/tmp', f'/tmp/{file_id}.tex'], stdout=subprocess.PIPE, timeout=10.0)
 except subprocess.TimeoutExpired:
     exit(2)
 
 if uplatex.returncode != 0:
-    with open('/tmp/tmp.log', 'r') as f:
+    with open(f'/tmp/{file_id}.log', 'r') as f:
         error = '!' + f.read().split('!')[1].split('Here')[0]
     print(error)
     exit(1)
 
 try:
-    subprocess.run(['dvipdfmx', '-q','-o', '/tmp/tmp.pdf', '/tmp/tmp.dvi'], timeout=10.0)
+    subprocess.run(['dvipdfmx', '-q','-o', f'/tmp/{file_id}.pdf', f'/tmp/{file_id}.dvi'], timeout=10.0)
 except subprocess.TimeoutExpired:
     exit(2)
 
 with open('/tmp/tmp.png', 'wb') as f:
-    subprocess.run(['pdftoppm', '-png', '-r', '200', '/tmp/tmp.pdf'], stdout=f)
+    subprocess.run(['pdftoppm', '-png', '-r', '200', f'/tmp/{file_id}.pdf'], stdout=f)
 
 if args.plain:
-    trim('/tmp/tmp.png', 15, 380)
+    trim(f'/tmp/{file_id}.png', 15, 380)
 else:
-    trim('/tmp/tmp.png', 10)
+    trim(f'/tmp/{file_id}.png', 10)
 
-with open('trimed-tmp.png' , 'rb') as f:
+with open(f'/tmp/trimed-{file_id}.png' , 'rb') as f:
     result_binary = f.read()
 
 sys.stdout.buffer.write(base64.b64encode(result_binary))
