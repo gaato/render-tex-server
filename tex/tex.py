@@ -75,7 +75,7 @@ except subprocess.TimeoutExpired:
     exit(2)
 
 with open('/tmp/tmp.png', 'wb') as f:
-    subprocess.run(['pdftoppm', '-png', '-r', '200', f'/tmp/{file_id}.pdf'], stdout=f)
+    subprocess.run(['pdftoppm', '-png', '-r', '200', f'/tmp/{file_id}.pdf', '/tmp'], stdout=f)
 
 if args.plain:
     trim(f'/tmp/{file_id}.png', 15, 380)
