@@ -75,14 +75,14 @@ except subprocess.TimeoutExpired:
     exit(2)
 
 with open('/tmp/tmp.png', 'wb') as f:
-    subprocess.run(['pdftoppm', '-png', '-r', '200', f'/tmp/{file_id}.pdf', '/tmp'], stdout=f)
+    subprocess.run(['pdftoppm', '-png', '-r', '200', f'/tmp/{file_id}.pdf', f'/tmp/{file_id}'], stdout=f)
 
 if args.plain:
-    trim(f'/tmp/{file_id}.png', 15, 380)
+    trim(f'/tmp/{file_id}-1.png', 15, 380)
 else:
-    trim(f'/tmp/{file_id}.png', 10)
+    trim(f'/tmp/{file_id}-1.png', 10)
 
-with open(f'/tmp/trimed-{file_id}.png' , 'rb') as f:
+with open(f'/tmp/trimed-{file_id}-1.png' , 'rb') as f:
     result_binary = f.read()
 
 sys.stdout.buffer.write(base64.b64encode(result_binary))
