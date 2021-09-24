@@ -1,8 +1,10 @@
+import os
 import subprocess
 
 from flask import Flask, jsonify
 
 app = Flask(__name__)
+here = os.path.dirname(os.path.abspath(__file__))
 
 @app.route('/')
 def help():
@@ -12,7 +14,7 @@ def help():
 def render_tex(s=None):
 
     r = subprocess.run(
-        ['docker', 'run', '--rm', '-i', 'tex', 'tex.py'],
+        ['sudo', '-u', 'tex', '-i', 'python', f'{here}/tex/tex.py'],
         input=s,
         stdout=subprocess.PIPE,
         text=True,
@@ -39,7 +41,7 @@ def render_tex(s=None):
 def render_texp(s=None):
 
     r = subprocess.run(
-        ['docker', 'run', '--rm', '-i', 'tex', 'tex.py', '-p'],
+        ['sudo', '-u', 'tex', '-i', 'python', f'{here}/tex/tex.py', '-p'],
         input=s,
         stdout=subprocess.PIPE,
         text=True,
@@ -67,7 +69,7 @@ def render_texp(s=None):
 def render_texpdf(s=None):
 
     r = subprocess.run(
-        ['docker', 'run', '--rm', '-i', 'tex', 'texpdf.py', '-p'],
+        ['sudo', '-u', 'tex', '-i', 'python', f'{here}/tex/texpdf.py'],
         input=s,
         stdout=subprocess.PIPE,
         text=True,
