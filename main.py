@@ -92,4 +92,4 @@ def render_texpdf(s=None):
 
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=80)
+    app.run(host='tex.gaato.dev', port=80)
