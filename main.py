@@ -4,34 +4,28 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-@app.route('/')
-def help():
-    return '/tex for math mode and /texp for text mode'
-
 @app.route('/', methods=['POST'])
 def render_tex():
 
-    if request.json.get('code') is None:
-        return None, 400
-    if request.json.get('type') == 'png':
+    if request.json['type'] == 'png':
         if not request.json.get('plain'):
             r = subprocess.run(
                 ['sudo', '-u', 'tex', '-i', 'python', '/home/tex/tex/tex.py'],
-                input=request.json.get('code'),
+                input=request.json['code'],
                 stdout=subprocess.PIPE,
                 text=True,
             )
         else:
             r = subprocess.run(
                 ['sudo', '-u', 'tex', '-i', 'python', '/home/tex/tex/tex.py', '-p'],
-                input=request.json.get('code'),
+                input=request.json['code'],
                 stdout=subprocess.PIPE,
                 text=True,
             )
-    elif request.json.get('type') == 'pdf':
+    elif request.json['type'] == 'pdf':
         r = subprocess.run(
             ['sudo', '-u', 'tex', '-i', 'python', '/home/tex/tex/texpdf.py'],
-            input=request.json.get('code'),
+            input=request.json['code'],
             stdout=subprocess.PIPE,
             text=True,
         )
