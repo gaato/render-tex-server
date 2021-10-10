@@ -11,7 +11,7 @@ $ pip -r requirements.txt
 $ sudo adduser tex
 $ cp tex /home/tex/tex
 ```
-(Install Python3 as `tex` and run `pip install -r ~/tex/requiremnts.txt`)
+(Install Python3 as `tex`)
 ```
 $ python main.py
 ```
