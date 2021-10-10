@@ -1,38 +1,9 @@
-#!/usr/local/bin/python
-
 import argparse
 import base64
 import os
 import subprocess
 import sys
 import random
-
-from PIL import Image, ImageChops
-
-
-def trim(image_path, range, absolute_trim_width=0):
-
-    image = Image.open(image_path)
-    width, _ = image.size
-    bg = Image.new('RGB', image.size, image.getpixel((0, 0)))
-    diff = ImageChops.difference(image, bg)
-    diff_bbox = diff.convert('RGB').getbbox()
-    if absolute_trim_width == 0:
-        l = diff_bbox[0] - range
-        t = diff_bbox[1] - range
-        r = diff_bbox[2] + range
-        b = diff_bbox[3] + range
-        crop_range = (l, t, r, b)
-    elif absolute_trim_width > 0:
-        l = absolute_trim_width
-        t = diff_bbox[1] - range
-        r = width - absolute_trim_width
-        b = diff_bbox[3] + range
-        crop_range = (l, t, r, b)
-    else:
-        raise ValueError
-    crop_image = image.crop(crop_range)
-    crop_image.save('/tmp/trimed-' + os.path.basename(image_path))
 
 
 here = os.path.dirname(os.path.abspath(__file__))
@@ -74,15 +45,8 @@ try:
 except subprocess.TimeoutExpired:
     exit(2)
 
-with open('/tmp/tmp.png', 'wb') as f:
-    subprocess.run(['pdftoppm', '-png', '-r', '200', f'/tmp/{file_id}.pdf', f'/tmp/{file_id}'], stdout=f)
+subprocess.run(['pdfcrop', f'/tmp/{file_id}.pdf', '--margins', '4 4 4 4'], stdout=subprocess.PIPE)
 
-if args.plain:
-    trim(f'/tmp/{file_id}-1.png', 15, 380)
-else:
-    trim(f'/tmp/{file_id}-1.png', 10)
+pdftoppm = subprocess.run(['pdftoppm', '-png', '-r', '400', f'/tmp/{file_id}-crop.pdf'], stdout=subprocess.PIPE)
 
-with open(f'/tmp/trimed-{file_id}-1.png' , 'rb') as f:
-    result_binary = f.read()
-
-sys.stdout.buffer.write(base64.b64encode(result_binary))
+sys.stdout.buffer.write(base64.b64encode(pdftoppm.stdout))
